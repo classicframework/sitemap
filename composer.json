@@ -1,0 +1,15 @@
+{
+  "name": "classicframework/sitemap",
+  "description": "Classic Framework Sitemap library",
+  "type": "library",
+  "license": "Unlicense",
+  "homepage": "https://github.com/classicframework/sitemap",
+  "require": {
+    "php": ">=5.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "classicframework\\sitemap\\": "src/"
+    }
+  }
+}
