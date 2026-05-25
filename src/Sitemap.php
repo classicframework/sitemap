@@ -2,20 +2,25 @@
 
 namespace classicframework\sitemap;
 
-use classicframework\core\Config;
-use classicframework\core\Router;
-
 class Sitemap
 {
   protected $config = array();
+  protected $routes = array();
+  protected $db = null;
 
-  public function __construct($config = array())
+  public function __construct($config = array(), $routes = array(), $db = null)
   {
     $this->config = is_array($config) ? $config : array();
+    $this->routes = is_array($routes) ? $routes : array();
+    $this->db = $db;
   }
 
   public function handle($request, $app = null)
   {
+    if ($request->path() !== $this->path()) {
+      return null;
+    }
+
     if (!$this->enabled()) {
       return null;
     }
@@ -71,7 +76,7 @@ class Sitemap
   public function urls($base_url = '', $app = null)
   {
     $base_url = rtrim((string) $base_url, '/');
-    $routes = Router::routes();
+    $routes = $this->routes;
     $urls = array();
     $seen = array();
 
@@ -139,11 +144,7 @@ class Sitemap
       return $urls;
     }
 
-    if (!is_object($app) || !method_exists($app, 'get_service')) {
-      return $urls;
-    }
-
-    $db = $app->get_service('db');
+    $db = $this->db;
 
     if (!is_object($db) || !method_exists($db, 'rows') || !method_exists($db, 'table')) {
       return $urls;
@@ -249,7 +250,7 @@ class Sitemap
       return $request->scheme() . '://' . $request->host();
     }
 
-    return rtrim((string) Config::get('_app_base_url', ''), '/');
+    return '';
   }
 
   protected function format_date($value)
